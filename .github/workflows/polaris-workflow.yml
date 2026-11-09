@@ -48,7 +48,9 @@ jobs:
           ### SARIF report parameters
           polaris_reports_sarif_create: true  # Create SARIF report and upload it as artifact
 
-
+          # Black Duck Detect parameters
+          detect_args: "--detect.accuracy.required=NONE"
+          
           ### SCAN CONFIGURATION: Uncomment below to enable
           # polaris_waitForScan: true # Wait for scan completion before proceeding
 
