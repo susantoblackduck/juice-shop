@@ -55,10 +55,10 @@ jobs:
           polaris_test_sca_location: hybrid
           ### GITHUB TOKEN
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Required when PR comments or sarif reports enabled
-          polaris_prComment_enabled: true
-          polaris_externalIssues_create: true
+          #polaris_prComment_enabled: true
+          #polaris_externalIssues_create: true
           ### SARIF report parameters
-          polaris_reports_sarif_create: true  # Create SARIF report and upload it as artifact
+          #polaris_reports_sarif_create: true  # Create SARIF report and upload it as artifact
 
 
           ### SCAN CONFIGURATION: Uncomment below to enable
