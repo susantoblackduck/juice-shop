@@ -33,10 +33,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'          # optional: caches npm downloads
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Polaris Security Scan
         id: polaris-scan
