@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2014-2025 Bjoern Kimminich & the OWASP Juice Shop contributors.
+ * Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
  * SPDX-License-Identifier: MIT
  */
 
-import { glob } from 'glob'
+import path from 'node:path'
+import { readdir, rm } from 'node:fs/promises'
 import logger from '../logger'
-import fs from 'fs-extra'
 import * as utils from '../utils'
 
 const cleanupFtpFolder = async () => {
   try {
-    const files = await glob('ftp/*.pdf')
+    const files = (await readdir('ftp')).filter((filename) => filename.endsWith('.pdf'))
     for (const filename of files) {
-      await fs.remove(filename)
+      await rm(path.join('ftp', filename), { force: true, recursive: true })
     }
   } catch (err) {
     logger.warn('Error listing PDF files in /ftp folder: ' + utils.getErrorMessage(err))

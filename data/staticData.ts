@@ -2,7 +2,7 @@ import path from 'node:path'
 import { readFile } from 'node:fs/promises'
 import { safeLoad } from 'js-yaml'
 import logger from '../lib/logger'
-import { type ChallengeKey } from 'models/challenge'
+import { type ChallengeKey } from '@juice-shop/models/challenge'
 
 export async function loadStaticData (file: string) {
   const filePath = path.resolve('./data/static/' + file + '.yml')
@@ -28,6 +28,14 @@ export interface StaticUser {
   feedback?: StaticUserFeedback
   address?: StaticUserAddress[]
   card?: StaticUserCard[]
+  passkeys?: StaticUserPasskey[]
+}
+export interface StaticUserPasskey {
+  credentialID: string
+  publicKey: string
+  counter?: number
+  transports?: string
+  aaguid?: string
 }
 export interface StaticUserSecurityQuestion {
   id: number
@@ -92,4 +100,9 @@ export interface StaticSecurityQuestions {
 }
 export async function loadStaticSecurityQuestionsData (): Promise<StaticSecurityQuestions[]> {
   return await loadStaticData('securityQuestions') as StaticSecurityQuestions[]
+}
+
+export type StaticTagGroups = Record<string, string[]>
+export async function loadStaticTagGroupsData (): Promise<StaticTagGroups> {
+  return await loadStaticData('tags') as StaticTagGroups
 }

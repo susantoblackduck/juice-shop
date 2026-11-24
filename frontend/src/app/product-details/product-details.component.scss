@@ -1,13 +1,17 @@
 /*!
- * Copyright (c) 2014-2025 Bjoern Kimminich & the OWASP Juice Shop contributors.
+ * Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
  * SPDX-License-Identifier: MIT
  */
+
+@use '../../styles/variables' as *;
 
 .img-thumbnail {
   height: auto;
   max-width: 100%;
-  padding: 0;
+  padding: $space-3xs;
   width: 200px;
+  border: var(--theme-thumbnail-border);
+  box-sizing: border-box;
 }
 
 mat-form-field {
@@ -24,21 +28,21 @@ p {
 }
 
 .detail-divider {
-  margin-bottom: 12px;
-  margin-top: 12px;
+  margin-bottom: $space-m;
+  margin-top: $space-m;
 }
 
 .rw-button {
-  margin-left: 8px;
+  margin-left: $space-xs;
 }
 
 .comment {
-  margin-bottom: 8px;
+  margin-bottom: $space-m;
 }
 
 .review-link {
   font-size: 11px;
-  margin-top: -10px;
+  margin-top: -$space-s;
   text-decoration: none;
 }
 
@@ -48,8 +52,8 @@ p {
 
 .item-price {
   float: left;
-  margin-right: 40px;
-  margin-top: 8px;
+  margin-right: $space-2xl;
+  margin-top: $space-xs;
 }
 
 .noResultText {
@@ -65,26 +69,48 @@ p {
 }
 
 .buttons {
-  padding-left: 13px;
-  padding-right: 13px;
+  padding-left: $space-m;
+  padding-right: $space-m;
 }
 
-.like-button {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-left: 8px;
-  margin-top: -4px;
-  position: relative;
+.like-icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.like-icon > * {
+  grid-area: 1 / 1;
 }
 
 .like-counter {
   border-radius: 50%;
-  bottom: 14px;
   font-size: 8px;
-  padding: 2px 4px;
-  position: absolute;
-  right: 8px;
+  line-height: 1;
+  padding: $space-3xs $space-2xs;
+}
+
+.like-icon-pop {
+  animation: like-pop 350ms ease-out;
+}
+
+@keyframes like-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.25);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .like-icon-pop {
+    animation: none;
+  }
 }
 
 h1 {
@@ -100,8 +126,8 @@ div {
   color: var(--theme-text-fade-30);
   display: flex;
   font-size: 11px;
-  margin-left: -10px;
-  margin-right: -10px;
+  margin-left: -$space-s;
+  margin-right: -$space-s;
 }
 
 .container {
@@ -112,28 +138,63 @@ div {
 .details-row {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: $space-ml;
 }
 
-@media (max-width: 599.98px) {  
+@media (max-width: 599.98px) {
   .details-row {
     flex-direction: column;
   }
 }
-
 
 .no-shrink {
   flex: 0 0 auto;
 }
 
 
-.review-row {
-  align-items: flex-start;
-  display: flex;
-  gap: 8px;
-}
-
-.like-container {
+.review-header {
   align-items: center;
   display: flex;
+  gap: $space-xs;
+  justify-content: space-between;
+}
+
+.review-message {
+  margin: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.review-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.review-actions {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: $space-3xs;
+}
+
+.warn-notification {
+  font-size: 47px;
+}
+
+.auto-focus-absorber {
+  height: 0;
+  position: absolute;
+}
+
+.review-label-spacing {
+  margin-right: $space-3xs;
+}
+
+.hint-spacing {
+  margin-left: $space-3xs;
+}
+
+.submit-button-spacing {
+  margin-left: $space-3xs;
 }

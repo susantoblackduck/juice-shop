@@ -1,9 +1,10 @@
 import { defineConfig } from 'cypress'
 import * as security from './lib/insecurity'
 import config from 'config'
-import type { Memory as MemoryConfig, Product as ProductConfig } from './lib/config.types'
+import type { Memory as MemoryConfig, Product as ProductConfig } from './lib/config.schema'
 import * as utils from './lib/utils'
-import * as otplib from 'otplib'
+import { generateSync } from 'otplib'
+import { buildAssertion, buildAttestation, loadVictimCredential } from './test/api/helpers/passkey'
 
 export default defineConfig({
   projectId: '3hrkhu',
@@ -35,15 +36,6 @@ export default defineConfig({
             (product) => product.useForChristmasSpecialChallenge
           )[0]
         },
-        GetCouponIntent () {
-          const trainingData = require(`data/chatbot/${utils.extractFilename(
-            config.get('application.chatBot.trainingData')
-          )}`)
-          const couponIntent = trainingData.data.filter(
-            (data: { intent: string }) => data.intent === 'queries.couponCode'
-          )[0]
-          return couponIntent
-        },
         GetFromMemories (property: string) {
           for (const memory of config.get<MemoryConfig[]>('memories') as any) {
             if (memory[property]) {
@@ -71,7 +63,7 @@ export default defineConfig({
           }
         },
         GenerateAuthenticator (inputString: string) {
-          return otplib.authenticator.generate(inputString)
+          return generateSync({ secret: inputString })
         },
         toISO8601 () {
           const date = new Date()
@@ -82,6 +74,15 @@ export default defineConfig({
         },
         isWindows () {
           return utils.isWindows()
+        },
+        async ForgePasskeyAssertion ({ challenge }: { challenge: string }) {
+          return buildAssertion(await loadVictimCredential(), challenge, { tamper: true })
+        },
+        async ForgePasskeyAttestation ({ challenge }: { challenge: string }) {
+          return buildAttestation((await loadVictimCredential()).credentialID, challenge)
+        },
+        async SignPasskeyAssertion ({ challenge, privateKeyPem }: { challenge: string, privateKeyPem: string }) {
+          return buildAssertion({ ...await loadVictimCredential(), privateKeyPem }, challenge, { tamper: false })
         }
       })
     }

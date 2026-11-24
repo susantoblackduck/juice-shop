@@ -1,22 +1,29 @@
 /*!
- * Copyright (c) 2014-2025 Bjoern Kimminich & the OWASP Juice Shop contributors.
+ * Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
  * SPDX-License-Identifier: MIT
  */
 
-.page-center {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-}
+@use '../../styles/variables' as *;
 
 mat-card {
   height: auto;
-  min-width: 320px;
-  width: 30%;
+  min-width: 510px;
+  width: 25%;
+  padding: $space-l $space-xl;
 }
 
-#submitButton {
-  float: right;
+@media (max-width: 599.98px) {
+  mat-card {
+    width: 100%;
+    min-width: auto;
+    margin-bottom: $space-l;
+    margin-left: $space-m;
+    margin-right: $space-m;
+  }
+}
+
+mat-form-field {
+  margin-bottom: $space-m;
 }
 
 .form-container {
@@ -25,22 +32,20 @@ mat-card {
   position: relative;
 }
 
-.form-container mat-form-field {
-  width: 100%;
-}
-
-.btn-return {
-  float: left;
-}
-
 .actions {
-  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: $space-m;
 }
 
-.actions::after {
-  clear: both;
-  content: '';
-  display: table;
+.center-container {
+  align-items: stretch;
+  display: flex;
+  justify-content: center;
+}
+
+.hint-spacing {
+  margin-left: $space-2xs;
 }
 
 input::-webkit-outer-spin-button,
@@ -48,23 +53,4 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   margin: 0;
-}
-
-.mat-mdc-form-field-hint {
-  align-items: center;
-  color: var(--theme-text-fade-30);
-  display: flex;
-  font-size: 11px;
-  margin-left: -10px;
-  margin-right: -10px;
-}
-
-.mdc-card {
-  border: 0;
-}
-
-mat-error {
-  font-size: 10.5px;
-  margin-left: -10px;
-  margin-top: -3px;
 }

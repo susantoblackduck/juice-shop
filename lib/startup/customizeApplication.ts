@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2014-2025 Bjoern Kimminich & the OWASP Juice Shop contributors.
+ * Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
  * SPDX-License-Identifier: MIT
  */
 
 import fs from 'node:fs'
 import config from 'config'
 import * as utils from '../utils'
-// @ts-expect-error FIXME due to non-existing type definitions for replace
-import replace from 'replace'
 
 const customizeApplication = async () => {
   if (config.get<string>('application.name')) {
@@ -43,23 +41,24 @@ const customizeLogo = async () => {
 
 const customizeChatbotAvatar = async () => {
   const avatarImage = await retrieveCustomFile('application.chatBot.avatar', 'frontend/dist/frontend/assets/public/images')
-  fs.copyFileSync('frontend/dist/frontend/assets/public/images/' + avatarImage, 'frontend/dist/frontend/assets/public/images/ChatbotAvatar.png')
+  if (avatarImage) {
+    fs.copyFileSync('frontend/dist/frontend/assets/public/images/' + avatarImage, 'frontend/dist/frontend/assets/public/images/chatbotAvatar.png')
+  }
 }
 
 const customizeHackingInstructorAvatar = async () => {
   const avatarImage = await retrieveCustomFile('hackingInstructor.avatarImage', 'frontend/dist/frontend/assets/public/images')
-  fs.copyFileSync('frontend/dist/frontend/assets/public/images/' + avatarImage, 'frontend/dist/frontend/assets/public/images/hackingInstructor.png')
+  if (avatarImage) {
+    fs.copyFileSync('frontend/dist/frontend/assets/public/images/' + avatarImage, 'frontend/dist/frontend/assets/public/images/hackingInstructor.png')
+  }
 }
 
 const customizeFavicon = async () => {
   const favicon = await retrieveCustomFile('application.favicon', 'frontend/dist/frontend/assets/public')
-  replace({
-    regex: /type="image\/x-icon" href="assets\/public\/.*"/,
-    replacement: `type="image/x-icon" href="assets/public/${favicon}"`,
-    paths: ['frontend/dist/frontend/index.html'],
-    recursive: false,
-    silent: true
-  })
+  if (!favicon) {
+    return
+  }
+  utils.replaceInFile('frontend/dist/frontend/index.html', /type="image\/x-icon" href="assets\/public\/.*"/, `type="image/x-icon" href="assets/public/${favicon}"`)
 }
 
 const customizePromotionVideo = async () => {
@@ -70,47 +69,36 @@ const customizePromotionSubtitles = async () => {
   await retrieveCustomFile('application.promotion.subtitles', 'frontend/dist/frontend/assets/public/videos')
 }
 
-const retrieveCustomFile = async (sourceProperty: string, destinationFolder: string) => {
+export const retrieveCustomFile = async (
+  sourceProperty: string,
+  destinationFolder: string,
+  downloadFile = utils.downloadToFile
+): Promise<string | undefined> => {
   let file = config.get<string>(sourceProperty)
   if (utils.isUrl(file)) {
     const filePath = file
     file = utils.extractFilename(file)
-    await utils.downloadToFile(filePath, destinationFolder + '/' + file)
+    const downloaded = await downloadFile(filePath, destinationFolder + '/' + file)
+    if (!downloaded) {
+      return undefined
+    }
   }
   return file
 }
 
 const customizeTitle = () => {
   const title = `<title>${config.get<string>('application.name')}</title>`
-  replace({
-    regex: /<title>.*<\/title>/,
-    replacement: title,
-    paths: ['frontend/dist/frontend/index.html'],
-    recursive: false,
-    silent: true
-  })
+  utils.replaceInFile('frontend/dist/frontend/index.html', /<title>.*<\/title>/, title)
 }
 
 const customizeTheme = () => {
-  const bodyClass = '"mat-app-background mat-typography ' + config.get<string>('application.theme') + '-theme"'
-  replace({
-    regex: /"mat-app-background mat-typography .*-theme"/,
-    replacement: bodyClass,
-    paths: ['frontend/dist/frontend/index.html'],
-    recursive: false,
-    silent: true
-  })
+  const bodyClass = '"' + config.get<string>('application.theme') + '-theme"'
+  utils.replaceInFile('frontend/dist/frontend/index.html', /".*-theme"/, bodyClass)
 }
 
 const customizeCookieConsentBanner = () => {
   const contentProperty = '"content": { "message": "' + config.get<string>('application.cookieConsent.message') + '", "dismiss": "' + config.get<string>('application.cookieConsent.dismissText') + '", "link": "' + config.get<string>('application.cookieConsent.linkText') + '", "href": "' + config.get<string>('application.cookieConsent.linkUrl') + '" }'
-  replace({
-    regex: /"content": { "message": ".*", "dismiss": ".*", "link": ".*", "href": ".*" }/,
-    replacement: contentProperty,
-    paths: ['frontend/dist/frontend/index.html'],
-    recursive: false,
-    silent: true
-  })
+  utils.replaceInFile('frontend/dist/frontend/index.html', /"content": { "message": ".*", "dismiss": ".*", "link": ".*", "href": ".*" }/, contentProperty)
 }
 
 export default customizeApplication

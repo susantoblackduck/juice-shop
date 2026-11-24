@@ -3,7 +3,7 @@ describe('/rest/products/reviews', () => {
     cy.visit('/#/search')
   })
 
-  describe('challenge "NoSQL DoS"', () => {
+  describe('challenge "noSqlCommandChallenge"', () => {
     beforeEach(() => {
       cy.login({ email: 'admin', password: 'admin123' })
     })
@@ -12,7 +12,7 @@ describe('/rest/products/reviews', () => {
         if (!isDocker) {
           cy.window().then(() => {
             void fetch(
-              `${Cypress.config('baseUrl')}/rest/products/sleep(1000)/reviews`,
+              `${Cypress.config('baseUrl')}/rest/products/sleep(100)/reviews`,
               {
                 method: 'GET',
                 headers: {
@@ -27,7 +27,7 @@ describe('/rest/products/reviews', () => {
     })
   })
 
-  describe('challenge "NoSQL Exfiltration"', () => {
+  describe('challenge "noSqlOrdersChallenge"', () => {
     it('should be possible to inject and get all the orders', () => {
       cy.task('isDocker').then((isDocker) => {
         if (!isDocker) {
@@ -48,7 +48,7 @@ describe('/rest/products/reviews', () => {
     })
   })
 
-  describe('challenge "NoSQL Manipulation"', () => {
+  describe('challenge "noSqlReviewsChallenge"', () => {
     beforeEach(() => {
       cy.login({ email: 'admin', password: 'admin123' })
     })
@@ -71,7 +71,7 @@ describe('/rest/products/reviews', () => {
     })
   })
 
-  describe('challenge "Forged Review"', () => {
+  describe('challenge "forgedReviewChallenge"', () => {
     beforeEach(() => {
       cy.login({ email: 'mc.safesearch', password: 'Mr. N00dles' })
     })
@@ -115,7 +115,7 @@ describe('/rest/products/reviews', () => {
     })
   })
 
-  describe('challenge "Multiple Likes"', () => {
+  describe('challenge "timingAttackChallenge"', () => {
     beforeEach(() => {
       cy.login({ email: 'mc.safesearch', password: 'Mr. N00dles' })
     })
@@ -153,9 +153,11 @@ describe('/rest/products/reviews', () => {
           const responseJson = await response.json()
           const reviewId = responseJson.data[0]._id
 
-          void sendPostRequest(reviewId)
-          void sendPostRequest(reviewId)
-          void sendPostRequest(reviewId)
+          await Promise.all([
+            sendPostRequest(reviewId),
+            sendPostRequest(reviewId),
+            sendPostRequest(reviewId)
+          ])
         }
       })
       cy.expectChallengeSolved({ challenge: 'Multiple Likes' })

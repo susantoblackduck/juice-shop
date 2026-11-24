@@ -9,7 +9,7 @@
   <div class="options-group">
     <mat-form-field>
       <mat-label>{{ 'LABEL_DIFFICULTY' | translate }}</mat-label>
-      <mat-select multiple [value]="filterSetting.difficulties" (selectionChange)="onDifficultyFilterChange($event.value)">
+      <mat-select multiple panelClass="filter-select-panel" [value]="filterSetting.difficulties" (selectionChange)="onDifficultyFilterChange($event.value)">
         <mat-select-trigger>
           @if (filterSetting.difficulties.length === 0) {
             {{ 'LABEL_DIFFICULTY' | translate }}
@@ -42,17 +42,21 @@
     <mat-form-field>
       <mat-label translate>LABEL_STATUS</mat-label>
       <mat-select placeholder="All" [value]="filterSetting.status" (selectionChange)="onStatusFilterChange($event.value)">
-        <mat-option [value]="null" class="mat-body">{{ 'STATUS_ALL' | translate }}</mat-option>
-        <mat-option value="unsolved" class="mat-body">{{ 'STATUS_UNSOLVED' | translate }}</mat-option>
-        <mat-option value="partially-solved" class="mat-body">{{ 'STATUS_PARTIALLY_SOLVED' | translate }}</mat-option>
-        <mat-option value="solved" class="mat-body">{{ 'STATUS_SOLVED' | translate }}</mat-option>
+        <mat-option [value]="null" class="mat-body-medium">{{ 'STATUS_ALL' | translate }}</mat-option>
+        <mat-option value="unsolved" class="mat-body-medium">{{ 'STATUS_UNSOLVED' | translate }}</mat-option>
+        <mat-option value="partially-solved" class="mat-body-medium">{{ 'STATUS_PARTIALLY_SOLVED' | translate }}</mat-option>
+        <mat-option value="solved" class="mat-body-medium">{{ 'STATUS_SOLVED' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>{{ 'LABEL_TAGS' | translate }}</mat-label>
-      <mat-select multiple [value]="filterSetting.tags" (selectionChange)="onTagFilterChange($event.value)">
-        @for (tag of tags; track tag) {
-          <mat-option [value]="tag" class="mat-body">{{ tag }}</mat-option>
+      <mat-select multiple panelClass="filter-select-panel" [value]="filterSetting.tags" (selectionChange)="onTagFilterChange($event.value)">
+        @for (group of tagGroups; track group.name) {
+          <mat-optgroup [label]="('TAG_GROUP_' + group.name.toUpperCase()) | translate">
+            @for (tag of group.tags; track tag) {
+              <mat-option [value]="tag" class="mat-body-medium" [matTooltip]="('TAG_' + tag.toUpperCase().split(' ').join('_') + '_DESCRIPTION') | translate" [matTooltipShowDelay]="500">{{ ('TAG_' + tag.toUpperCase().split(' ').join('_')) | translate:{ dependency: ('TAG_DEPENDENCY' | translate) } }}</mat-option>
+            }
+          </mat-optgroup>
         }
       </mat-select>
     </mat-form-field>

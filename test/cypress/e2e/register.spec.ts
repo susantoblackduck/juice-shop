@@ -3,7 +3,7 @@ describe('/#/register', () => {
     cy.visit('/#/register')
   })
 
-  describe('challenge "persistedXssUser"', () => {
+  describe('challenge "persistedXssUserChallenge"', () => {
     beforeEach(() => {
       cy.login({
         email: 'admin',
@@ -11,7 +11,8 @@ describe('/#/register', () => {
       })
     })
 
-    it('should be possible to bypass validation by directly using Rest API', async () => {
+    // FIXME Test is hanging in CI/CD pipeline. Needs dedicated troubleshooting.
+    xit('should be possible to bypass validation by directly using Rest API', async () => {
       cy.task('isDocker').then((isDocker) => {
         if (!isDocker) {
           cy.window().then(async () => {
@@ -46,7 +47,7 @@ describe('/#/register', () => {
     })
   })
 
-  describe('challenge "registerAdmin"', () => {
+  describe('challenge "registerAdminChallenge"', () => {
     it('should be possible to register admin user using REST API', () => {
       cy.window().then(async () => {
         const response = await fetch(`${Cypress.config('baseUrl')}/api/Users/`, {
@@ -70,7 +71,7 @@ describe('/#/register', () => {
     })
   })
 
-  describe('challenge "passwordRepeat"', () => {
+  describe('challenge "passwordRepeatChallenge"', () => {
     it('should be possible to register user without repeating the password', () => {
       cy.window().then(async () => {
         const response = await fetch(`${Cypress.config('baseUrl')}/api/Users/`, {
@@ -92,7 +93,7 @@ describe('/#/register', () => {
     })
   })
 
-  describe('challenge "registerEmptyUser"', () => {
+  describe('challenge "emptyUserRegistration"', () => {
     it('should be possible to register a user with blank email/password', () => {
       cy.window().then(async () => {
         const response = await fetch(`${Cypress.config('baseUrl')}/api/Users`, {

@@ -45,14 +45,29 @@ Cypress.Commands.add(
     }
     cy.get('#password').type(context.password)
     cy.get('#loginButton').click()
-    cy.wait(500)
+    if (context.totpSecret) {
+      cy.location('hash').should('include', '/2fa/enter')
+      cy.task<string>('GenerateAuthenticator', context.totpSecret).then(
+        (totpToken: string) => {
+          cy.get('#totpToken').type(totpToken)
+          cy.get('#totpSubmitButton').click()
+        }
+      )
+      cy.location('hash').should('include', '/search')
+    } else {
+      cy.location('hash').should('include', '/search')
+    }
+    cy.getCookie('token').should((cookie) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      expect(cookie?.value).to.be.ok
+    })
   }
 )
 
 function walkRecursivelyInArray (arr: number[], cb: any, index = 0) {
   if (arr.length === 0) return
   const ret = cb(index, arr.shift());
-  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+
   ((ret && ret.chainerId) ? ret : cy.wrap(ret))
     .then((ret: boolean) => {
       if (!ret) return
